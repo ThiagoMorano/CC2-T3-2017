@@ -1,0 +1,10 @@
+#Ausencia do identificador após a palavra reservada Table #
+
+@DDL
+Table {
+	$universidade->aincrement('id');
+	$universidade->string('nome');
+	$universidade->integer('ano_fundacao')->unsigned();
+	$universidade->genTimestamps();
+}
+@endDDL
