@@ -1,0 +1,20 @@
+# Atribuição de string à atributo do tipo inteiro (idade) #
+
+@DDL
+Table aluno {
+	$aluno->aincrement('id');
+	$aluno->string('nome');
+	$aluno->string('cpf');
+	$aluno->integer('idade')->unsigned();
+	$aluno->genTimestamps();
+
+}
+@endDDL
+
+@DML
+$aluno = [
+	"Ricardo Ferreira",
+	"123.456.789-0",
+	"27"
+];
+@endDML
