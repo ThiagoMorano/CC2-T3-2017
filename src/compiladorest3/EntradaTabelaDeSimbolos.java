@@ -15,7 +15,7 @@ import java.util.List;
 public class EntradaTabelaDeSimbolos {
     private String nome, tipo, tipo_retorno;
     private List<String> parametros;    
-    private TabelaDeSimbolos subTabeladoRegistro;
+    private TabelaDeSimbolos subTabeladoTable;
     private List<String> tipos_parametros;
     
     
@@ -24,7 +24,7 @@ public class EntradaTabelaDeSimbolos {
         this.nome = nome;
         this.tipo = tipo;
         this.tipo_retorno = tipo_retorno;
-        this.subTabeladoRegistro = sub;
+        this.subTabeladoTable = sub;
         this.tipos_parametros = tipo_par;
         if(listaPassada == null)
         {
@@ -49,7 +49,7 @@ public class EntradaTabelaDeSimbolos {
     
     public TabelaDeSimbolos getsubTabela()
     {
-        return this.subTabeladoRegistro;
+        return this.subTabeladoTable;
     }
     
     public List<String> getListaPar()

@@ -15,27 +15,27 @@ import java.util.List;
 public class TabelaDeSimbolos {
     private String escopo;
     private List<EntradaTabelaDeSimbolos> simbolos;
-    //private List<Registro> registros;
+    private List<Table> tables;
     
     public TabelaDeSimbolos(String escopo) {
         simbolos = new ArrayList<EntradaTabelaDeSimbolos>();
-        //registros = new ArrayList<Registro>();
+        tables = new ArrayList<Table>();
         this.escopo = escopo;
     }
-    /*public Registro getRegistro(String nome) {
-        for(Registro registro : registros) {
-            if(registro.getNome().equals(nome))
-                return registro;
+    public Table getTable(String nome) {
+        for(Table tabela : tables) {
+            if(tabela.getNome().equals(nome))
+                return tabela;
         }
         return null;
-    }*/
+    }
     
     public String getEscopo() {
         return escopo;
     }
-    /*public void addRegistro(Registro registro) {
-        this.registros.add(registro);
-    }*/
+    public void addTable(Table tabela) {
+        this.tables.add(tabela);
+    }
     public void adicionarSimbolo(String nome, String tipo, List<String> parametros, TabelaDeSimbolos sub) {
         simbolos.add(new EntradaTabelaDeSimbolos(nome,tipo, parametros, sub, null, null));
     }
@@ -120,11 +120,11 @@ public class TabelaDeSimbolos {
                 return true;
             }
         }
-        /*for(Registro registro : registros) {
-            if(registro.existeAtributo(nome) || registro.getNome().equals(nome))
+        for(Table tabela : tables) {
+            if(tabela.existeAtributo(nome) || tabela.getNome().equals(nome))
                 return true;
             
-        }*/
+        }
         return false;
     }
     

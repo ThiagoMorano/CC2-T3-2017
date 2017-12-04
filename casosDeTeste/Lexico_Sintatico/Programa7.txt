@@ -1,4 +1,4 @@
-# Erro lexico simbolo "|" não identificado #
+﻿# Erro lexico simbolo "|" não identificado #
 
 @DDL
 Table livro {
@@ -16,7 +16,7 @@ $livro = [
 	"Dom Cosmpolitan",
 	"Editora Nova",
 	"Livro bastante misterioso, cheio de histórias incríveis",
-	'20-11-1997',
-	'5|5'
+	20-11-1997,
+	5|5
 ];
 @endDML
