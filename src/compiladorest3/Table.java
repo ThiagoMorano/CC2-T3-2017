@@ -10,12 +10,16 @@ import java.util.ArrayList;
 /**
  *
  * @author Thiago
+ * 
+ * Classe usada para representar as tabelas (SQL) dentro dos escopos da pilha de tabelas de símbolos.
  */
 public class Table {
     private String nome;
     private ArrayList<EntradaTabelaDeSimbolos> atributos = new ArrayList<EntradaTabelaDeSimbolos>();
-    private ArrayList<EntradaTabelaDeSimbolos> relacoes = new ArrayList<EntradaTabelaDeSimbolos>();
     
+    private ArrayList<Relationship> relacoesHasMany = new ArrayList<Relationship>();
+    private ArrayList<Relationship> relacoesBelongsTo = new ArrayList<Relationship>();
+    private ArrayList<Relationship> relacoesHasOne = new ArrayList<Relationship>();
     
     public void Table(String nome) {
         this.nome = nome;
@@ -44,24 +48,52 @@ public class Table {
         return this.atributos;
     }
     
-    
-    public void addRelacao(EntradaTabelaDeSimbolos entrada) {
-        this.relacoes.add(entrada);
-    }
-    public boolean existeRelacao(String nome) {
-        for(EntradaTabelaDeSimbolos relacao : relacoes) {
-            if(relacao.getNome().equals(nome))
-                return true;
-        }
-        return false;
-    }
-    
-    
     public void setNome(String nome){
         this.nome = nome;
     }
     
     public String getNome () {
         return this.nome;
+    }
+    
+    
+    //////Relações
+    
+    
+    //Funções para adicionar relações de determinado tipo
+    public void addRelacaoHasMany(String nomeEntrada) {
+        Relationship relacao = new Relationship(this.nome, nomeEntrada, Tipo.hasMany);    
+        this.relacoesHasMany.add(relacao);
+    }
+    public void addRelacaoBelongsTo(String nomeEntrada) {
+        Relationship relacao = new Relationship(this.nome, nomeEntrada, Tipo.belongsTo);
+        this.relacoesHasMany.add(relacao);
+    }
+    public void addRelacaoHasOne(String nomeEntrada) {
+        Relationship relacao = new Relationship(this.nome, nomeEntrada, Tipo.hasOne);
+        this.relacoesHasOne.add(relacao);
+    }
+    
+    //Funções para verificar existência de relação de determinado tipo
+    public boolean existeRelacaoHasMany(String nome) {
+        for(Relationship relacao : relacoesHasMany) {
+            if(relacao.getTabelaRelacionada().equals(nome))
+                return true;
+        }
+        return false;
+    }
+    public boolean existeRelacaoBelongsTo(String nome) {
+       for(Relationship relacao : relacoesBelongsTo) {
+            if(relacao.getTabelaRelacionada().equals(nome))
+                return true;
+        }
+        return false;
+    }
+    public boolean existeRelacaoHasOne(String nome) {
+       for(Relationship relacao : relacoesHasOne) {
+            if(relacao.getTabelaRelacionada().equals(nome))
+                return true;
+        }
+        return false;
     }
 }

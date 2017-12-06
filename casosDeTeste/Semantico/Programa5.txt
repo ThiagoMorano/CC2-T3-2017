@@ -18,7 +18,6 @@ Table autor {
 
 Table livro {
 	$livro->aincrement('id');
-	$livro->integer('livro_id');
 	$livro->string('nome');
 	$livro->string('editora');
 	$livro->string('descricao');

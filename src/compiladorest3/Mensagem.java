@@ -18,7 +18,6 @@ public class Mensagem {
     public void append(String texto) {
         mensagem.append(texto);
         errou = true;
-        //System.out.println(mensagem.toString());
     }
     
     public boolean errou() {
