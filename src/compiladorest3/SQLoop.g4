@@ -37,8 +37,6 @@ IGNORADOS:
 /* ######## COMENTÁRIOS ######## */
 COMENTARIO :  '#' ~('#')* '#' {skip();};
 
-
-
 /* ######## ANALISADOR SINTÁTICO - REGRAS ######## */
 
 programa : ddl (dml)? EOF;
@@ -50,11 +48,11 @@ declaracoes : 'Table' IDENT '{' definicoes (relacoes)?  '}' (declaracoes)?;
 definicoes : tabela '->' def_metodos ';' (definicoes)?;
 
 def_metodos returns [boolean u_inteiro, int tipo_def]
-	: 'aincrement' '(' var_int ')'
+	: 'aincrement' '(' var_int ')' {$tipo_def = 0;}
 	| 'integer' '(' var_int ')' {$tipo_def = 1;} ('->' 'unsigned' '()' {$u_inteiro = true; $tipo_def = 2;})?
 	| 'string' '(' var_str ')' {$tipo_def = 3;}
 	| 'date' '(' var_date ')' {$tipo_def = 4;}
-	| 'genTimestamps''()';
+	| 'genTimestamps''()' {$tipo_def = 5;};
 
 relacoes : 'Relationships' '{' rel_def '}';
 
@@ -75,7 +73,7 @@ valores : valor (mais_valor)?;
 
 valor : valor_str | valor_int | valor_date;
 
-valor_str : CADEIA;
+valor_str : CADEIA ;
 
 valor_int : INTEIRO;
 
@@ -89,7 +87,7 @@ tabela returns [int linha] : '$' IDENT {$linha = $IDENT.line;};
 
 variavel : var_int | var_str;
 
-var_int returns [int linha] : '\'' IDENT '\'' {$linha = $IDENT.line;};
+var_int returns [int linha, String nome] : '\'' IDENT '\'' {$linha = $IDENT.line;};
 
 var_str returns [int linha] : '\'' IDENT '\'' {$linha = $IDENT.line;};
 

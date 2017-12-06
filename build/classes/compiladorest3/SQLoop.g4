@@ -10,8 +10,6 @@ PalavrasChave : 'Table' | 'Relationships' | 'aincrement' | 'integer' |'string' |
 fragment LETRA_MINUSCULA : ('a'..'z');
 fragment LETRA_MAIUSCULA : ('A'..'Z');
 fragment NUMERO : '0' .. '9';
-fragment CHAR: ' ' | '@' | '-' | '_' | '$' | '/' | '\'' | ','| '!' | '.' | '?' | '%' | '(' | ')' | '+' | '*' | ':' | ';' | '=' | '<' | '>' | '[' | '|' | ']' | '\\' | '~';
-//fragment CHAR: ~('\'' | '#' | '\n');
 
 
 /* ######## IDENT (SEQUENCIA DE LETRAS, DÍGITOS E UNDERSCORE ('_') COMEÇANDO POR LETRA OU UNDERSCORE.) ######## */
@@ -24,10 +22,6 @@ INTEIRO : NUMERO+ ;
 
 /* ######## CADEIA DE CARACTERES: USO COM ASPAS SIMPLES (') - É o valor atribuído a variáveis strings. Não permitido uso de \n . ######## */
 CADEIA : '"' (~('"' | '\n') )* '"';
-//CADEIA : (IDENT | ' ' | '\t' | '-' | '/' | '$' | '\\' | ',' | '\"' | '%' );
-//CADEIA : ( (' ' .. '\"') | ('$' .. '&') | ('(' .. '~') ) ( (' ' .. '&') | ('(' .. '~') )*;
-//CADEIA: '\"' (LETRA_MINUSCULA | LETRA_MINUSCULA | CHAR | NUMERO)* (LETRA_MINUSCULA | LETRA_MINUSCULA | CHAR) (LETRA_MINUSCULA | LETRA_MINUSCULA | CHAR | NUMERO)* '\"';
-
 
 /* ######## FORMATACAO DE DATAS ######## */
 //DATA : (NUMERO NUMERO) '-' (NUMERO NUMERO) '-' (NUMERO NUMERO NUMERO NUMERO);
@@ -43,8 +37,6 @@ IGNORADOS:
 /* ######## COMENTÁRIOS ######## */
 COMENTARIO :  '#' ~('#')* '#' {skip();};
 
-
-
 /* ######## ANALISADOR SINTÁTICO - REGRAS ######## */
 
 programa : ddl (dml)? EOF;
@@ -55,8 +47,12 @@ declaracoes : 'Table' IDENT '{' definicoes (relacoes)?  '}' (declaracoes)?;
 
 definicoes : tabela '->' def_metodos ';' (definicoes)?;
 
-def_metodos : 'aincrement' '(' var_int ')' | 'integer' '(' var_int ')' ('->' 'unsigned' '()' )? |
-		  'string' '(' var_str ')' | 'date' '(' var_date ')' | 'genTimestamps''()';
+def_metodos returns [boolean u_inteiro, int tipo_def]
+	: 'aincrement' '(' var_int ')' {$tipo_def = 0;}
+	| 'integer' '(' var_int ')' {$tipo_def = 1;} ('->' 'unsigned' '()' {$u_inteiro = true; $tipo_def = 2;})?
+	| 'string' '(' var_str ')' {$tipo_def = 3;}
+	| 'date' '(' var_date ')' {$tipo_def = 4;}
+	| 'genTimestamps''()' {$tipo_def = 5;};
 
 relacoes : 'Relationships' '{' rel_def '}';
 
@@ -77,25 +73,25 @@ valores : valor (mais_valor)?;
 
 valor : valor_str | valor_int | valor_date;
 
-valor_str : CADEIA;
+valor_str : CADEIA ;
 
-valor_int : '\'' INTEIRO '\'';
+valor_int : INTEIRO;
 
-valor_date : '\'' INTEIRO '-' INTEIRO '-' INTEIRO '\'';
+valor_date : INTEIRO '-' INTEIRO '-' INTEIRO;
 
 mais_valor : (',' valor)*;
 
 consulta : '->' variavel '->' 'where'( var_int '(' valor_int ')' | var_str '(' valor_str ')' );
 
-tabela : '$' IDENT;
+tabela returns [int linha] : '$' IDENT {$linha = $IDENT.line;};
 
 variavel : var_int | var_str;
 
-var_int : '\'' IDENT '\'';
+var_int returns [int linha, String nome] : '\'' IDENT '\'' {$linha = $IDENT.line;};
 
-var_str : '\'' IDENT '\'';
+var_str returns [int linha] : '\'' IDENT '\'' {$linha = $IDENT.line;};
 
-var_date : '\'' IDENT '\'';
+var_date returns [int linha] : '\'' IDENT '\'' {$linha = $IDENT.line;};
 
 
 /*#### TRATAMENTO DE ERROS DE SÍMBOLOS NÃO IDENTIFICADOS ####*/

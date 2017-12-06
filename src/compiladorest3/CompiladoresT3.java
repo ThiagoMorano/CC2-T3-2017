@@ -48,10 +48,9 @@ public class CompiladoresT3 {
         else {
             v.mensagem.append("Compilou\n");
             out = v.mensagem;
-            /*GeradorDeCódigo gerador = new GeradorDeCódigo(v.retorneEscopos());
+            GeradorDeCódigo gerador = new GeradorDeCódigo(v.retorneEscopos());
             gerador.visitPrograma(arvore);
-            out = gerador.codigo;*/
-                    
+            out = gerador.codigo;                    
         }
         
         } catch (ParseCancellationException pce) {
