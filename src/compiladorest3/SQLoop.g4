@@ -45,7 +45,7 @@ ddl : '@DDL' declaracoes '@endDDL';
 
 declaracoes : 'Table' IDENT '{' definicoes (relacoes)?  '}' (declaracoes)?;
 
-definicoes : tabela '->' def_metodos ';' (definicoes)?;
+definicoes : tabela '->' def_metodos ';' (defi  nicoes)?;
 
 def_metodos returns [boolean u_inteiro, int tipo_def]
 	: 'aincrement' '(' var_int ')' {$tipo_def = 0;}
