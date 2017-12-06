@@ -1,4 +1,4 @@
-﻿# Erro lexico simbolo "|" não identificado #
+# Erro lexico simbolo "|" não identificado #
 
 @DDL
 Table livro {

@@ -1,4 +1,4 @@
-﻿# Ausencia do simbolo reservado "=" na atribuição de valores à $autor #
+# Ausencia do simbolo reservado "=" na atribuição de valores à $autor #
 @DDL
 Table autor {
 	$autor->aincrement('id');

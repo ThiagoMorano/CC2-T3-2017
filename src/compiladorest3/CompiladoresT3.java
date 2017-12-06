@@ -42,11 +42,13 @@ public class CompiladoresT3 {
         Visitor v = new Visitor();
         v.visitPrograma(arvore);
         if(v.mensagem.errou()) {
-            v.mensagem.append("Fim da compilacao\n");
+            System.out.print("Erro na compilação.\n\n");
+            System.out.print(v.mensagem);
+            v.mensagem.append("\nFim da compilacao\n");
             out = v.mensagem;
         }
         else {
-            v.mensagem.append("Compilou\n");
+            System.out.print("Compilou\n");
             out = v.mensagem;
             GeradorDeCódigo gerador = new GeradorDeCódigo(v.retorneEscopos());
             gerador.visitPrograma(arvore);

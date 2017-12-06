@@ -3,7 +3,7 @@ grammar SQLoop;
 /* ITENS LÉXICOS */
 
 /* ######## PALAVRAS CHAVE (NÃO PODE USAR COMO NOME DE VARIÁVEL OU FUNÇÃO) ######## */
-PalavrasChave : 'Table' | 'Relationships' | 'aincrement' | 'integer' |'string' | 'unsigned' | 'genTimestamps' | 'belongsTo' | 'getTimestamps' | 'where' | 'hasMany' | 'date';
+PalavrasChave : 'Table' | 'Relationships' | 'aincrement' | 'integer' |'string' | 'unsigned' | 'genTimestamps' | 'belongsTo' | 'hasMany' | 'hasOne' | 'getTimestamps' | 'where' | 'date';
 
 
 /* ######## DECLARAÇÃO DE FRAGMENTS PARA SIMPLIFICAR A GRAMÁTICA. NUNCA É CONTADO COMO TOKEN. ######## */
@@ -58,7 +58,10 @@ relacoes : 'Relationships' '{' rel_def '}';
 
 rel_def : tabela '->' rel_metodos ';' (rel_def)? ;
 
-rel_metodos : 'belongsTo' '(' var_str ')';
+rel_metodos returns [int tipo_rel]
+	: 'belongsTo' '(' var_str ')' {$tipo_rel = 0;}
+	| 'hasMany' '(' var_str ')' {$tipo_rel = 1;}
+	| 'hasOne' '(' var_str ')' {$tipo_rel = 2;};
 
 
 dml : '@DML' comandos '@endDML';
