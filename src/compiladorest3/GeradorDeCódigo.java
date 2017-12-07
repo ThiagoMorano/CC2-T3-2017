@@ -164,12 +164,10 @@ public class GeradorDeCódigo extends SQLoopBaseVisitor {
     public Object visitRel_metodos(SQLoopParser.Rel_metodosContext ctx) {
         if(ctx.var_str() != null) {
             ArrayList<String> retorno = new ArrayList<String>();
-            retorno.add(ctx.var_str().IDENT().getText());
-            /*
+            retorno.add(ctx.var_str().IDENT().getText());            
             if(ctx.tipo_rel == 1) retorno.add("belongsTo");       
             if(ctx.tipo_rel == 2) retorno.add("hasMany");
-            if(ctx.tipo_rel == 3) retorno.add("hasOne"); */
-            retorno.add("belongsTo");
+            if(ctx.tipo_rel == 3) retorno.add("hasOne");            
             return retorno;
         }
         return null;

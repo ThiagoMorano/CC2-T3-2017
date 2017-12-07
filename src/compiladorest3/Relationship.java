@@ -30,7 +30,7 @@ public class Relationship {
     
     Tipo tipo; //O tipo de relacao entre tabelas de origem e a tabela relacionada
     
-    public Relationship(String tOrigem, String tRelacionada, Tipo tpo) {
+    Relationship(String tOrigem, String tRelacionada, Tipo tpo) {
         tabelaOrigem = tOrigem;
         tabelaRelacionada = tRelacionada;
         tipo = tpo;
@@ -39,7 +39,7 @@ public class Relationship {
     public Relationship(String tOrigem) {
         tabelaOrigem = tOrigem;
     }
-    
+  
     public void setTabelaRelacionada(String tRelacionada) {
         this.tabelaRelacionada = tRelacionada;
     }

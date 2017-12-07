@@ -147,12 +147,14 @@ public class SQLoopLexer extends Lexer {
 		switch (actionIndex) {
 		case 2:
 			 throw new ParseCancellationException("Linha "+getLine()+": "+getText()+" - simbolo nao identificado\n"); 
+			
 		}
 	}
 	private void COMENTARIO_ERRO_action(RuleContext _localctx, int actionIndex) {
 		switch (actionIndex) {
 		case 3:
 			 throw new ParseCancellationException("Linha "+getLine()+": comentario nao fechado\n"); 
+			
 		}
 	}
 

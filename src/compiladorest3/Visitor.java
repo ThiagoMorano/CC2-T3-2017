@@ -31,7 +31,6 @@ public class Visitor extends SQLoopBaseVisitor {
     //são declaradas para serem validadas ao fim do DDL
     HashMap<Relationship, Integer> relacoesDeclaradas = new HashMap<Relationship, Integer>();
     
-
     public PilhaDeTabelas retorneEscopos() {
         return this.escopos;
     }
@@ -42,12 +41,13 @@ public class Visitor extends SQLoopBaseVisitor {
         
         escopos.empilhar(tabelaDeSimbolos);
         
-        tipos.add("literal");
+        tipos.add("string");
         tipos.add("inteiro");
         tipos.add("u_inteiro");
-        tipos.add("data");
+        tipos.add("a_inteiro");
+        tipos.add("date");
         tipos.add("tabela");
-
+        tipos.add("timestamp");
         visitDdl(ctx.ddl());
 
         //Validação das relacoes declaradas
@@ -90,6 +90,7 @@ public class Visitor extends SQLoopBaseVisitor {
 
         //Adiciona Table à Tabela de Símbolos
         tabelaDeSimbolos.adicionarSimbolo(tabela.getNome(), "tabela", null, null);
+        tabelaDeSimbolos.addTabela(tabela);
 
         //Adiciona atributos à Table
         if (ctx.definicoes() != null) {
@@ -98,14 +99,7 @@ public class Visitor extends SQLoopBaseVisitor {
 
         //Adiciona relacoes à Table
         if (ctx.relacoes() != null) {
-            TabelaDeSimbolos novaTS = new TabelaDeSimbolos(ctx.IDENT().getText());
-            
-            //Cria um novo escopo com o nome da tabela cujas relações serão declaradas
-            escopos.empilhar(novaTS);
-            
-            visitRelacoes(ctx.relacoes());
-            
-            escopos.desempilhar();
+            visitRelacoes(ctx.relacoes(), tabela);
         }
 
         if (ctx.declaracoes() != null) {
@@ -139,11 +133,17 @@ public class Visitor extends SQLoopBaseVisitor {
     //		  'string' '(' var_str ')' | 'date' '(' var_date ')' | 'genTimestamps''()';
     public Object visitDef_metodos(SQLoopParser.Def_metodosContext ctx, Table tabela) {
         String nome = "";
+        String nome2 = "";
         String tipo = "";
         int linha = 0;
 
         //Define o tipo de acordo com a variável
         switch (ctx.tipo_def) {
+            case 0: 
+                nome = (String) visitVar_int(ctx.var_int());
+                linha = ctx.var_int().linha;
+                tipo = "a_inteiro";
+                break;
             case 1: //Caso integer(var_int)                
                 nome = (String) visitVar_int(ctx.var_int());
                 linha = ctx.var_int().linha;
@@ -157,12 +157,17 @@ public class Visitor extends SQLoopBaseVisitor {
             case 3: //Caso string(var_str)
                 nome = (String) visitVar_str(ctx.var_str());
                 linha = ctx.var_str().linha;
-                tipo = "literal";
+                tipo = "string";
                 break;
             case 4: //Caso date(var_date)
                 nome = (String) visitVar_date(ctx.var_date());
                 linha = ctx.var_date().linha;
                 tipo = "data";
+                break;
+            case 5:
+                nome = "created_at";
+                nome2 = "updated_at";             
+                tipo = "timestamp";
                 break;
         }
 
@@ -174,6 +179,11 @@ public class Visitor extends SQLoopBaseVisitor {
         //Adiciona aos atributos da Table
         EntradaTabelaDeSimbolos entrada = new EntradaTabelaDeSimbolos(nome, tipo, null, null, null, null);
         tabela.addAtributo(entrada);
+        if(!nome2.equals("")) {
+              EntradaTabelaDeSimbolos entrada2 = new EntradaTabelaDeSimbolos(nome2, tipo, null, null, null, null);
+              tabela.addAtributo(entrada2);
+        }
+        
 
         return null;
     }
@@ -197,23 +207,23 @@ public class Visitor extends SQLoopBaseVisitor {
     }
 
     //relacoes : 'Relationships' '{' rel_def '}';
-    @Override
-    public Object visitRelacoes(SQLoopParser.RelacoesContext ctx) {
-        visitRel_def(ctx.rel_def());
+    
+    public Object visitRelacoes(SQLoopParser.RelacoesContext ctx, Table tabela) {
+        visitRel_def(ctx.rel_def(), tabela);
         return null;
     }
 
     //rel_def : tabela '->' rel_metodos ';' (rel_def)? ;
-    @Override
-    public Object visitRel_def(SQLoopParser.Rel_defContext ctx) {
+    
+    public Object visitRel_def(SQLoopParser.Rel_defContext ctx, Table tabela) {
         String nome = (String) visitTabela(ctx.tabela());
         
         //Acusa erro se o nome utilizado for diferente do nome da tabela do escopo atual
-        if(!escopos.topo().getEscopo().equals(nome)) {
+        if(!tabela.getNome().equals(nome)) {
             mensagem.append("Linha "+ ctx.tabela().linha +": definicao de relacionamento de tabela fora do escopo\n");
         }
         
-        visitRel_metodos(ctx.rel_metodos());
+        visitRel_metodos(ctx.rel_metodos(), tabela);
         
         if (ctx.rel_def() != null) {
             visitRel_def(ctx.rel_def());
@@ -222,37 +232,35 @@ public class Visitor extends SQLoopBaseVisitor {
     }
 
     //rel_metodos : 'belongsTo' '(' var_str ')' | 'hasMany' '(' var_str ')';
-    @Override
-    public Object visitRel_metodos(SQLoopParser.Rel_metodosContext ctx) {
-        Relationship relacao = new Relationship(escopos.topo().getEscopo());
-        
-        String tabelaRelacionada = "";
+    
+    public Object visitRel_metodos(SQLoopParser.Rel_metodosContext ctx, Table tabela) {
+       
         Tipo tipo = Tipo.belongsTo;
         int linha = 0;
-        
+        String tabelaRelacionada = "";
         switch (ctx.tipo_rel) {
-            case 0: //Caso belongsTo
+            case 0: //Caso belongsTo                
                 tabelaRelacionada = (String)visitVar_str(ctx.var_str());
                 tipo = Tipo.belongsTo;
                 linha = ctx.var_str().linha;
+                tabela.addRelacaoBelongsTo(new Relationship(tabela.getNome(), tabelaRelacionada, tipo));
                 break;
             case 1: //Caso hasMany
                 tabelaRelacionada = (String)visitVar_str(ctx.var_str());
                 tipo = Tipo.hasMany;
                 linha = ctx.var_str().linha;
+                tabela.addRelacaoHasMany(new Relationship(tabela.getNome(), tabelaRelacionada, tipo));
                 break;
             case 2: //Caso hasOne
                 tabelaRelacionada = (String)visitVar_str(ctx.var_str());
                 tipo = Tipo.hasOne;
                 linha = ctx.var_str().linha;
+                tabela.addRelacaoHasOne(new Relationship(tabela.getNome(), tabelaRelacionada, tipo));
                 break;
         }
-
-        relacao.setTabelaRelacionada(tabelaRelacionada);
-        relacao.setTipo(tipo);
-        
+       
         //Adiciona relacao ao hashmap de relacoes declaradas
-        relacoesDeclaradas.put(relacao, linha);
+   //     relacoesDeclaradas.put(relacao, linha);
         
         return null;
     }
@@ -261,7 +269,112 @@ public class Visitor extends SQLoopBaseVisitor {
     /////////////////////////////////// DML ////////////////////////////////////
     @Override
     public Object visitDml(SQLoopParser.DmlContext ctx) {
-        return super.visitDml(ctx); //To change body of generated methods, choose Tools | Templates.
+        if(ctx.comandos() != null)
+            visitComandos(ctx.comandos());
+        return null;
     }
+
+    @Override
+    public Object visitCmd(SQLoopParser.CmdContext ctx) {
+       if(ctx.tabela() != null) {
+           String tabelaStr = ctx.tabela().IDENT.getText();
+           if(ctx.insercao() != null) {
+               ArrayList<String> atributos = (ArrayList<String>) visitInsercao(ctx.insercao());
+               Table tabela = tabelaDeSimbolos.getTable(tabelaStr); 
+               ArrayList<EntradaTabelaDeSimbolos> atributosTabela = retiraAtributos(tabela.getAtrs());
+               if(atributosTabela.size() != atributos.size())
+                   mensagem.append("Linha "+ ctx.tabela().linha +": quantidade de parametros diferente da quantidade de atributos");
+               else {
+                   for(int i = 0; i < atributos.size(); i++) {
+                       EntradaTabelaDeSimbolos entrada = atributosTabela.get(i);
+                       String atributo = atributos.get(i);
+                       if(atributo.equals("inteiro")) {
+                           if(!entrada.getTipo().equals("u_inteiro") || entrada.getTipo().equals("inteiro")) {
+                               System.out.println(entrada.getTipo());
+                               mensagem.append("Linha "+ ctx.tabela().linha +": tipos diferentes entre atributo e parametros");
+                           }
+                       }
+                       else {
+                           if(!atributo.equals(entrada.getTipo())) mensagem.append("Linha "+ ctx.tabela().linha +": tipos diferentes entre atributo e parametros");
+                       }
+                           
+                   }
+               }                   
+           }
+       }
+       return null;
+    }
+
+    @Override
+    public Object visitComandos(SQLoopParser.ComandosContext ctx) {
+        if(ctx.cmd() != null)
+            visitCmd(ctx.cmd());
+        return null;
+    }
+
+    @Override
+    public Object visitInsercao(SQLoopParser.InsercaoContext ctx) {
+        if(ctx.valores() != null) {
+            ArrayList<String> atributos = (ArrayList<String>) visitValores(ctx.valores());
+            return atributos;
+        }
+        return null;
+    }
+
+    @Override
+    public Object visitValores(SQLoopParser.ValoresContext ctx) {
+        ArrayList<String> ret = new ArrayList<String>();
+        if(ctx.valor() != null)
+        {
+            String str = (String) visitValor(ctx.valor());
+            ret.add(str);
+        }
+        if(ctx.mais_valor() != null) {
+            ArrayList<String> retorno = (ArrayList) visitMais_valor(ctx.mais_valor());
+            ret.addAll(retorno);
+        }
+        
+        return ret;
+    }
+
+    @Override
+    public Object visitMais_valor(SQLoopParser.Mais_valorContext ctx) {
+        ArrayList<String> ret = new ArrayList<String>();
+        if(ctx.valor() != null) {    
+            for(SQLoopParser.ValorContext ctx1 : ctx.valor()) {
+                String str = (String) visitValor(ctx1);
+                ret.add(str);
+            }
+        }
+        return ret;
+    }
+
+    @Override
+    public Object visitValor(SQLoopParser.ValorContext ctx) {
+        if(ctx.valor_date() != null)
+            return "date";
+        if(ctx.valor_int() != null)
+            return "inteiro";
+        if(ctx.valor_str() != null)
+            return "string";
+        return null;
+    }
+
+    private ArrayList<EntradaTabelaDeSimbolos> retiraAtributos(ArrayList<EntradaTabelaDeSimbolos> atributos) {
+        ArrayList<EntradaTabelaDeSimbolos> retorno = new ArrayList<EntradaTabelaDeSimbolos>();
+        for(EntradaTabelaDeSimbolos str : atributos) {
+            if(!(str.getTipo().equals("a_inteiro") || str.getTipo().equals("timestamp")))
+            {
+                retorno.add(str);
+            }
+        }
+        return retorno;
+    }
+    
+    
+    
+    
+    
+    
 
 }

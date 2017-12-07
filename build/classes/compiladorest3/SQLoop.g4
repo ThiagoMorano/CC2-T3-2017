@@ -3,7 +3,7 @@ grammar SQLoop;
 /* ITENS LÉXICOS */
 
 /* ######## PALAVRAS CHAVE (NÃO PODE USAR COMO NOME DE VARIÁVEL OU FUNÇÃO) ######## */
-PalavrasChave : 'Table' | 'Relationships' | 'aincrement' | 'integer' |'string' | 'unsigned' | 'genTimestamps' | 'belongsTo' | 'getTimestamps' | 'where' | 'hasMany' | 'date';
+PalavrasChave : 'Table' | 'Relationships' | 'aincrement' | 'integer' |'string' | 'unsigned' | 'genTimestamps' | 'belongsTo' | 'hasMany' | 'hasOne' | 'getTimestamps' | 'where' | 'date';
 
 
 /* ######## DECLARAÇÃO DE FRAGMENTS PARA SIMPLIFICAR A GRAMÁTICA. NUNCA É CONTADO COMO TOKEN. ######## */
@@ -45,7 +45,7 @@ ddl : '@DDL' declaracoes '@endDDL';
 
 declaracoes : 'Table' IDENT '{' definicoes (relacoes)?  '}' (declaracoes)?;
 
-definicoes : tabela '->' def_metodos ';' (defi  nicoes)?;
+definicoes : tabela '->' def_metodos ';' (definicoes)?;
 
 def_metodos returns [boolean u_inteiro, int tipo_def]
 	: 'aincrement' '(' var_int ')' {$tipo_def = 0;}
@@ -58,7 +58,10 @@ relacoes : 'Relationships' '{' rel_def '}';
 
 rel_def : tabela '->' rel_metodos ';' (rel_def)? ;
 
-rel_metodos : 'belongsTo' '(' var_str ')';
+rel_metodos returns [int tipo_rel]
+	: 'belongsTo' '(' var_str ')' {$tipo_rel = 0;}
+	| 'hasMany' '(' var_str ')' {$tipo_rel = 1;}
+	| 'hasOne' '(' var_str ')' {$tipo_rel = 2;};
 
 
 dml : '@DML' comandos '@endDML';
@@ -79,7 +82,7 @@ valor_int : INTEIRO;
 
 valor_date : INTEIRO '-' INTEIRO '-' INTEIRO;
 
-mais_valor : (',' valor)*;
+mais_valor :  (',' valor)*;
 
 consulta : '->' variavel '->' 'where'( var_int '(' valor_int ')' | var_str '(' valor_str ')' );
 
@@ -87,7 +90,7 @@ tabela returns [int linha] : '$' IDENT {$linha = $IDENT.line;};
 
 variavel : var_int | var_str;
 
-var_int returns [int linha, String nome] : '\'' IDENT '\'' {$linha = $IDENT.line;};
+var_int returns [int linha] : '\'' IDENT '\'' {$linha = $IDENT.line;};
 
 var_str returns [int linha] : '\'' IDENT '\'' {$linha = $IDENT.line;};
 

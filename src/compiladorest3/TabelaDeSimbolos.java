@@ -136,4 +136,8 @@ public class TabelaDeSimbolos {
         }
         return ret;
     }
+
+    void addTabela(Table tabela) {
+        tables.add(tabela);
+    }
 }

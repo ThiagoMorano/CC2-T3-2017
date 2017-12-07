@@ -61,17 +61,14 @@ public class Table {
     
     
     //Funções para adicionar relações de determinado tipo
-    public void addRelacaoHasMany(String nomeEntrada) {
-        Relationship relacao = new Relationship(this.nome, nomeEntrada, Tipo.hasMany);    
-        this.relacoesHasMany.add(relacao);
+    public void addRelacaoHasMany(Relationship rel) {        
+        this.relacoesHasMany.add(rel);
     }
-    public void addRelacaoBelongsTo(String nomeEntrada) {
-        Relationship relacao = new Relationship(this.nome, nomeEntrada, Tipo.belongsTo);
-        this.relacoesHasMany.add(relacao);
+    public void addRelacaoBelongsTo(Relationship rel) {
+        this.relacoesBelongsTo.add(rel);
     }
-    public void addRelacaoHasOne(String nomeEntrada) {
-        Relationship relacao = new Relationship(this.nome, nomeEntrada, Tipo.hasOne);
-        this.relacoesHasOne.add(relacao);
+    public void addRelacaoHasOne(Relationship rel) {
+        this.relacoesHasOne.add(rel);
     }
     
     //Funções para verificar existência de relação de determinado tipo

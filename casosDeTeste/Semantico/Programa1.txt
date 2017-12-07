@@ -1,4 +1,4 @@
-# Identificador adicional (e-mail) não declarado #
+# Incompatibilidade de tipos 3 com string(nome) #
 
 @DDL
 Table aluno {
@@ -9,15 +9,13 @@ Table aluno {
 	$aluno->genTimestamps();
 }
 
-
 @endDDL
 
 @DML
 $aluno = [
 	3,
-	"Lucas Andrade",
-	"luquinhasnadrade@email.com",
 	"123.456.789-0",
-	22
+	22,
+	"mat.santos.freitas@gmail.com"
 ];
 @endDML

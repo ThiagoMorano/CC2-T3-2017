@@ -45,7 +45,7 @@ ddl : '@DDL' declaracoes '@endDDL';
 
 declaracoes : 'Table' IDENT '{' definicoes (relacoes)?  '}' (declaracoes)?;
 
-definicoes : tabela '->' def_metodos ';' (defi  nicoes)?;
+definicoes : tabela '->' def_metodos ';' (definicoes)?;
 
 def_metodos returns [boolean u_inteiro, int tipo_def]
 	: 'aincrement' '(' var_int ')' {$tipo_def = 0;}
@@ -82,7 +82,7 @@ valor_int : INTEIRO;
 
 valor_date : INTEIRO '-' INTEIRO '-' INTEIRO;
 
-mais_valor : (',' valor)*;
+mais_valor :  (',' valor)*;
 
 consulta : '->' variavel '->' 'where'( var_int '(' valor_int ')' | var_str '(' valor_str ')' );
 
@@ -90,7 +90,7 @@ tabela returns [int linha] : '$' IDENT {$linha = $IDENT.line;};
 
 variavel : var_int | var_str;
 
-var_int returns [int linha, String nome] : '\'' IDENT '\'' {$linha = $IDENT.line;};
+var_int returns [int linha] : '\'' IDENT '\'' {$linha = $IDENT.line;};
 
 var_str returns [int linha] : '\'' IDENT '\'' {$linha = $IDENT.line;};
 
