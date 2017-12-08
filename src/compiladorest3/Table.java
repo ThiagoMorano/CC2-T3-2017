@@ -93,4 +93,16 @@ public class Table {
         }
         return false;
     }
+
+    ArrayList<Relationship> getAllBelongsTo() {
+        return this.relacoesBelongsTo;
+    }
+
+    ArrayList<Relationship> getAllHasMany() {
+        return this.relacoesHasMany;
+    }
+
+    ArrayList<Relationship> getAllHasOne() {
+        return this.relacoesHasOne;
+    }
 }

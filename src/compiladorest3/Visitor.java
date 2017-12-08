@@ -72,6 +72,26 @@ public class Visitor extends SQLoopBaseVisitor {
     @Override
     public Object visitDdl(SQLoopParser.DdlContext ctx) {
         visitDeclaracoes(ctx.declaracoes());
+         List<Table> tabelas = tabelaDeSimbolos.getTables();
+        for(Table tabela1 : tabelas) {
+            for(Relationship rp : tabela1.getAllBelongsTo()) {
+                String nome = rp.tabelaRelacionada;
+                if(!tabelaDeSimbolos.existeSimbolo(nome))
+                    mensagem.append("Linha " + rp.linha + ": tabela " + nome + " nao declarada");
+            }  
+            for(Relationship rp : tabela1.getAllHasMany()) {
+                String nome = rp.tabelaRelacionada;
+                if(!tabelaDeSimbolos.existeSimbolo(nome))
+                    mensagem.append("Linha " + rp.linha + ": tabela " + nome + " nao declarada.");
+                
+            }
+            for(Relationship rp : tabela1.getAllHasOne()) {
+                String nome = rp.tabelaRelacionada;
+                if(!tabelaDeSimbolos.existeSimbolo(nome))
+                    mensagem.append("Linha " + rp.linha + ": tabela " + nome + " nao declarada.");
+                
+            }
+        }
         return null;
     }
 
@@ -173,7 +193,7 @@ public class Visitor extends SQLoopBaseVisitor {
 
         //Acusa erro se já existe um atributo com esse nome na tabela
         if (nome != "" && tabela.existeAtributo(nome)) {
-            mensagem.append("Linha " + linha + ": identificador " + nome + " ja declarado anteriormente\n");
+            mensagem.append("Linha " + linha + ": identificador " + nome + " ja declarado anteriormente.");
         }
 
         //Adiciona aos atributos da Table
@@ -220,7 +240,7 @@ public class Visitor extends SQLoopBaseVisitor {
         
         //Acusa erro se o nome utilizado for diferente do nome da tabela do escopo atual
         if(!tabela.getNome().equals(nome)) {
-            mensagem.append("Linha "+ ctx.tabela().linha +": definicao de relacionamento de tabela fora do escopo\n");
+            mensagem.append("Linha "+ ctx.tabela().linha +": definicao de relacionamento de tabela fora do escopo");
         }
         
         visitRel_metodos(ctx.rel_metodos(), tabela);
@@ -243,19 +263,19 @@ public class Visitor extends SQLoopBaseVisitor {
                 tabelaRelacionada = (String)visitVar_str(ctx.var_str());
                 tipo = Tipo.belongsTo;
                 linha = ctx.var_str().linha;
-                tabela.addRelacaoBelongsTo(new Relationship(tabela.getNome(), tabelaRelacionada, tipo));
+                tabela.addRelacaoBelongsTo(new Relationship(tabela.getNome(), tabelaRelacionada, tipo, linha));
                 break;
             case 1: //Caso hasMany
                 tabelaRelacionada = (String)visitVar_str(ctx.var_str());
                 tipo = Tipo.hasMany;
                 linha = ctx.var_str().linha;
-                tabela.addRelacaoHasMany(new Relationship(tabela.getNome(), tabelaRelacionada, tipo));
+                tabela.addRelacaoHasMany(new Relationship(tabela.getNome(), tabelaRelacionada, tipo, linha));
                 break;
             case 2: //Caso hasOne
                 tabelaRelacionada = (String)visitVar_str(ctx.var_str());
                 tipo = Tipo.hasOne;
                 linha = ctx.var_str().linha;
-                tabela.addRelacaoHasOne(new Relationship(tabela.getNome(), tabelaRelacionada, tipo));
+                tabela.addRelacaoHasOne(new Relationship(tabela.getNome(), tabelaRelacionada, tipo, linha));
                 break;
         }
        
@@ -290,7 +310,6 @@ public class Visitor extends SQLoopBaseVisitor {
                        String atributo = atributos.get(i);
                        if(atributo.equals("inteiro")) {
                            if(!entrada.getTipo().equals("u_inteiro") || entrada.getTipo().equals("inteiro")) {
-                               System.out.println(entrada.getTipo());
                                mensagem.append("Linha "+ ctx.tabela().linha +": tipos diferentes entre atributo e parametros");
                            }
                        }

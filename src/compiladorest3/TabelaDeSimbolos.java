@@ -140,4 +140,8 @@ public class TabelaDeSimbolos {
     void addTabela(Table tabela) {
         tables.add(tabela);
     }
+
+    List<Table> getTables() {
+        return this.tables;
+    }
 }

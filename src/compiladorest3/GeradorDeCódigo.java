@@ -149,6 +149,7 @@ public class GeradorDeCódigo extends SQLoopBaseVisitor {
             ArrayList<String> retorno = (ArrayList<String>) visitRel_metodos(ctx.rel_metodos());
             if(retorno != null) {
                 this.codigo.append(",\n");
+                System.out.println(retorno);
                 String atributo = retorno.get(0);
                 String tipo = retorno.get(1);
                 String tabela = ctx.tabela().IDENT().getText();
@@ -165,9 +166,10 @@ public class GeradorDeCódigo extends SQLoopBaseVisitor {
         if(ctx.var_str() != null) {
             ArrayList<String> retorno = new ArrayList<String>();
             retorno.add(ctx.var_str().IDENT().getText());            
-            if(ctx.tipo_rel == 1) retorno.add("belongsTo");       
-            if(ctx.tipo_rel == 2) retorno.add("hasMany");
-            if(ctx.tipo_rel == 3) retorno.add("hasOne");            
+            System.out.println(ctx.tipo_rel);
+            if(ctx.tipo_rel == 0) retorno.add("belongsTo");       
+            if(ctx.tipo_rel == 1) retorno.add("hasMany");
+            if(ctx.tipo_rel == 2) retorno.add("hasOne");            
             return retorno;
         }
         return null;

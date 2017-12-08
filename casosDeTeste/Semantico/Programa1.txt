@@ -1,4 +1,4 @@
-# Incompatibilidade de tipos 3 com string(nome) #
+# Quantidade de parametros na insercao diferente do numero de atributos inserciveis na tabela #
 
 @DDL
 Table aluno {

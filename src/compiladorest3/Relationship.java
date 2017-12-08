@@ -29,11 +29,12 @@ public class Relationship {
     String tabelaRelacionada;   //Tabela com que a de origem se relaciona
     
     Tipo tipo; //O tipo de relacao entre tabelas de origem e a tabela relacionada
-    
-    Relationship(String tOrigem, String tRelacionada, Tipo tpo) {
-        tabelaOrigem = tOrigem;
-        tabelaRelacionada = tRelacionada;
-        tipo = tpo;
+    int linha;
+    Relationship(String tOrigem, String tRelacionada, Tipo tpo, int linha) {
+        this.tabelaOrigem = tOrigem;
+        this.tabelaRelacionada = tRelacionada;
+        this.tipo = tpo;
+        this.linha = linha;
     }
     
     public Relationship(String tOrigem) {
