@@ -44,7 +44,7 @@ public class CompiladoresT3 {
         if(v.mensagem.errou()) {
             System.out.print("Erro na compilação.\n\n");
             System.out.print(v.mensagem);
-            v.mensagem.append("\nFim da compilacao\n");
+            v.mensagem.append("\nFim da compilacao");
             out = v.mensagem;
         }
         else {
@@ -58,7 +58,7 @@ public class CompiladoresT3 {
         } catch (ParseCancellationException pce) {
             if (pce.getMessage() != null) {
                 out.append(pce.getMessage());
-                out.append("Fim da compilacao\n");              
+                out.append("Fim da compilacao");              
             }
         }
      

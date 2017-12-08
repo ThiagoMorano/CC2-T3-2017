@@ -32,9 +32,9 @@ public class ErrorListener implements ANTLRErrorListener{
         
         if(!mensagem.errou) {   
             if(token.getText() == "<EOF>")
-                mensagem.append("Linha " + i + ":" + " erro sintatico proximo a EOF" + "\nFim da compilacao\n");
+                mensagem.append("Linha " + i + ":" + " erro sintatico proximo a EOF" + "\nFim da compilacao");
             else
-                mensagem.append("Linha " + i + ":" + " erro sintatico proximo a "+ token.getText() + "\nFim da compilacao\n");
+                mensagem.append("Linha " + i + ":" + " erro sintatico proximo a "+ token.getText() + "\nFim da compilacao");
         }
         throw new ParseCancellationException();
 

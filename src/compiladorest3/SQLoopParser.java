@@ -1447,7 +1447,6 @@ public class SQLoopParser extends Parser {
 
 	public static class Var_intContext extends ParserRuleContext {
 		public int linha;
-		public String nome;
 		public Token IDENT;
 		public TerminalNode IDENT() { return getToken(SQLoopParser.IDENT, 0); }
 		public Var_intContext(ParserRuleContext parent, int invokingState) {
