@@ -77,18 +77,18 @@ public class Visitor extends SQLoopBaseVisitor {
             for(Relationship rp : tabela1.getAllBelongsTo()) {
                 String nome = rp.tabelaRelacionada;
                 if(!tabelaDeSimbolos.existeSimbolo(nome))
-                    mensagem.append("Linha " + rp.linha + ": tabela " + nome + " nao declarada");
+                    mensagem.append("Linha " + rp.linha + ": tabela " + nome + " nao declarada\n");
             }  
             for(Relationship rp : tabela1.getAllHasMany()) {
                 String nome = rp.tabelaRelacionada;
                 if(!tabelaDeSimbolos.existeSimbolo(nome))
-                    mensagem.append("Linha " + rp.linha + ": tabela " + nome + " nao declarada.");
+                    mensagem.append("Linha " + rp.linha + ": tabela " + nome + " nao declarada\n");
                 
             }
             for(Relationship rp : tabela1.getAllHasOne()) {
                 String nome = rp.tabelaRelacionada;
                 if(!tabelaDeSimbolos.existeSimbolo(nome))
-                    mensagem.append("Linha " + rp.linha + ": tabela " + nome + " nao declarada.");
+                    mensagem.append("Linha " + rp.linha + ": tabela " + nome + " nao declarada\n");
                 
             }
         }
@@ -193,7 +193,7 @@ public class Visitor extends SQLoopBaseVisitor {
 
         //Acusa erro se já existe um atributo com esse nome na tabela
         if (nome != "" && tabela.existeAtributo(nome)) {
-            mensagem.append("Linha " + linha + ": atributo " + nome + " ja declarado anteriormente");
+            mensagem.append("Linha " + linha + ": atributo " + nome + " ja declarado anteriormente\n");
         }
 
         //Adiciona aos atributos da Table
@@ -240,7 +240,7 @@ public class Visitor extends SQLoopBaseVisitor {
         
         //Acusa erro se o nome utilizado for diferente do nome da tabela do escopo atual
         if(!tabela.getNome().equals(nome)) {
-            mensagem.append("Linha "+ ctx.tabela().linha +": definicao de relacionamento de tabela fora do escopo");
+            mensagem.append("Linha "+ ctx.tabela().linha +": definicao de relacionamento de tabela fora do escopo\n");
         }
         
         visitRel_metodos(ctx.rel_metodos(), tabela);
@@ -263,19 +263,26 @@ public class Visitor extends SQLoopBaseVisitor {
                 tabelaRelacionada = (String)visitVar_str(ctx.var_str());
                 tipo = Tipo.belongsTo;
                 linha = ctx.var_str().linha;
+                if(!tabela.existeAtributo(tabelaRelacionada+"_id"))
+                    mensagem.append("Linha "+ linha +": chave estrangeira "+tabelaRelacionada+"_id nao declarada\n");
                 tabela.addRelacaoBelongsTo(new Relationship(tabela.getNome(), tabelaRelacionada, tipo, linha));
+                
                 break;
             case 1: //Caso hasMany
                 tabelaRelacionada = (String)visitVar_str(ctx.var_str());
                 tipo = Tipo.hasMany;
                 linha = ctx.var_str().linha;
                 tabela.addRelacaoHasMany(new Relationship(tabela.getNome(), tabelaRelacionada, tipo, linha));
+                if(!tabela.existeAtributo(tabelaRelacionada+"_id"))
+                    mensagem.append("Linha "+ linha +": chave estrangeira "+tabelaRelacionada+"_id nao declarada\n");
                 break;
             case 2: //Caso hasOne
                 tabelaRelacionada = (String)visitVar_str(ctx.var_str());
                 tipo = Tipo.hasOne;
                 linha = ctx.var_str().linha;
                 tabela.addRelacaoHasOne(new Relationship(tabela.getNome(), tabelaRelacionada, tipo, linha));
+                if(!tabela.existeAtributo(tabelaRelacionada+"_id"))
+                    mensagem.append("Linha "+ linha +": chave estrangeira "+tabelaRelacionada+"_id nao declarada\n");
                 break;
         }
        
@@ -302,19 +309,19 @@ public class Visitor extends SQLoopBaseVisitor {
                ArrayList<String> atributos = (ArrayList<String>) visitInsercao(ctx.insercao());
                Table tabela = tabelaDeSimbolos.getTable(tabelaStr); 
                ArrayList<EntradaTabelaDeSimbolos> atributosTabela = retiraAtributos(tabela.getAtrs());
-               if(atributosTabela.size() != atributos.size())
-                   mensagem.append("Linha "+ ctx.tabela().linha +": quantidade de parametros diferente da quantidade de atributos");
+               if(atributosTabela.size() < atributos.size())
+                   mensagem.append("Linha "+ ctx.tabela().linha +": quantidade de parametros diferente da quantidade de atributos\n");
                else {
                    for(int i = 0; i < atributos.size(); i++) {
                        EntradaTabelaDeSimbolos entrada = atributosTabela.get(i);
                        String atributo = atributos.get(i);
                        if(atributo.equals("inteiro")) {
                            if(!entrada.getTipo().equals("u_inteiro") || entrada.getTipo().equals("inteiro")) {
-                               mensagem.append("Linha "+ ctx.tabela().linha +": tipos diferentes entre parametro e atributo "+ entrada.getNome());
+                               mensagem.append("Linha "+ ctx.tabela().linha +": tipos diferentes entre parametro e atributo "+ entrada.getNome()+"\n");
                            }
                        }
                        else {
-                           if(!atributo.equals(entrada.getTipo())) mensagem.append("Linha "+ ctx.tabela().linha +": tipos diferentes entre parametro e atributo "+entrada.getNome() );
+                           if(!atributo.equals(entrada.getTipo())) mensagem.append("Linha "+ ctx.tabela().linha +": tipos diferentes entre parametro e atributo "+entrada.getNome()+"\n");
                        }
                            
                    }
@@ -328,6 +335,9 @@ public class Visitor extends SQLoopBaseVisitor {
     public Object visitComandos(SQLoopParser.ComandosContext ctx) {
         if(ctx.cmd() != null)
             visitCmd(ctx.cmd());
+        if(ctx.comandos() != null) {
+            visitComandos(ctx.comandos());
+        }
         return null;
     }
 
@@ -386,7 +396,9 @@ public class Visitor extends SQLoopBaseVisitor {
             {
                 retorno.add(str);
             }
+           
         }
+        System.out.println(retorno);
         return retorno;
     }
     

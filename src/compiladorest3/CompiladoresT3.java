@@ -44,7 +44,7 @@ public class CompiladoresT3 {
         if(v.mensagem.errou()) {
             System.out.print("Erro na compilação.\n\n");
             System.out.print(v.mensagem);
-            v.mensagem.append("\nFim da compilacao");
+            v.mensagem.append("Fim da compilacao");
             out = v.mensagem;
         }
         else {
