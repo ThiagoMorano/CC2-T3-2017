@@ -1,0 +1,2 @@
+Linha 7: atributo nome ja declarado anteriormente
+Fim da compilacao

@@ -1,0 +1,21 @@
+# Quantidade de parametros na insercao diferente do numero de atributos inserciveis na tabela #
+
+@DDL
+Table aluno {
+	$aluno->aincrement('id');
+	$aluno->string('nome');
+	$aluno->string('cpf');
+	$aluno->integer('idade')->unsigned();
+	$aluno->genTimestamps();
+}
+
+@endDDL
+
+@DML
+$aluno = [
+	"Matheus",
+	"123.456.789-0",
+	22,
+	"mat.santos.freitas@gmail.com"
+];
+@endDML

@@ -1,0 +1,20 @@
+# Ausencia do simbolo reservado "=" na atribuição de valores à $autor #
+@DDL
+Table autor {
+	$autor->aincrement('id');
+	$autor->string('nome');
+	$autor->string('email');
+	$autor->integer('idade')->unsigned();
+	$autor->string('cpf');
+}
+@endDDL
+
+@DML
+$autor [
+	3,
+	"Machado de Assis",
+	"machadoassis@email.com",
+	55,
+	"123.456.789-0"
+];
+@endDML

@@ -1,0 +1,49 @@
+# Ausencia da chave estrangeira em livro (relação m-n) #
+
+# Insercao com quantidade diferente de parametros e atributos #
+
+@DDL
+Table autor {
+	$autor->aincrement('id');
+	$autor->string('nome');
+	$autor->string('email');
+	$autor->integer('idade')->unsigned();
+	$autor->string('cpf');
+	$autor->integer('livro_id');
+
+	Relationships{
+		$autor->hasMany('livro');
+	}
+}
+
+Table livro {
+	$livro->aincrement('id');
+	$livro->string('nome');
+	$livro->string('editora');
+	$livro->string('descricao');
+	$livro->date('ano_lancamento');
+	$livro->integer('edicao')->unsigned();
+
+	Relationships{
+		$livro->hasMany('autor');
+	}
+}
+@endDDL
+
+@DML
+$autor = [
+			"Carlos Herrera",
+			"carlaoherrera@email.com",
+			44,
+			"111.222.333-4"
+];
+
+$livro = [
+			"O santo dos santos",
+			"Editora Nova",
+			"Livro destinado à todos aqueles que se consideram santos",
+			1944,
+			1950,
+			2
+];
+@endDML

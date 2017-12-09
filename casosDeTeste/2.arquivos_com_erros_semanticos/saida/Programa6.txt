@@ -1,0 +1,2 @@
+Linha 13: definicao de relacionamento de tabela fora do escopo
+Fim da compilacao

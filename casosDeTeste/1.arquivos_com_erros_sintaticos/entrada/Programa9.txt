@@ -1,0 +1,12 @@
+# Erro sintatico, ausencia de delimitador ";" #
+
+@DDL
+Table livro {
+	$livro->aincrement('id');
+	$livro->string('nome');
+	$livro->string('editora');
+	$livro->string('descricao');
+	$livro->date('ano_lancamento');
+	$livro->integer('edicao')->unsigned()
+}
+@endDDL

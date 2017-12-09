@@ -1,0 +1,3 @@
+Linha 13: chave estrangeira universiade_id nao declarada
+Linha 13: tabela universiade nao declarada
+Fim da compilacao

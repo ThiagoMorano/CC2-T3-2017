@@ -1,0 +1,11 @@
+# Atributo "nome" já declarado anteriormente #
+
+@DDL
+Table universidade {
+	$universidade->aincrement('id');
+	$universidade->string('nome');
+	$universidade->string('nome');
+	$universidade->integer('ano_fundacao')->unsigned();
+	$universidade->genTimestamps();
+}
+@endDDL

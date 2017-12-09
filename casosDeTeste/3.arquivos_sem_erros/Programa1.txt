@@ -1,0 +1,24 @@
+@DDL
+Table aluno {
+	$aluno->aincrement('id');
+	$aluno->string('nome');
+	$aluno->string('cpf');
+	$aluno->integer('idade')->unsigned();
+	$aluno->genTimestamps();
+	
+	Relationships{
+	   	$aluno->belongsTo('universidade');
+   }
+}
+
+
+@endDDL
+
+@DML
+$aluno = [
+	3,
+	"Lucas Andrade",
+	"123.456.789-0",
+	22
+];
+@endDML

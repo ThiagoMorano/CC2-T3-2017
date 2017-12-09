@@ -1,0 +1,2 @@
+Linha 15: tipos diferentes entre parametro e atributo idade
+Fim da compilacao
