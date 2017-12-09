@@ -193,7 +193,7 @@ public class Visitor extends SQLoopBaseVisitor {
 
         //Acusa erro se já existe um atributo com esse nome na tabela
         if (nome != "" && tabela.existeAtributo(nome)) {
-            mensagem.append("Linha " + linha + ": identificador " + nome + " ja declarado anteriormente.");
+            mensagem.append("Linha " + linha + ": atributo " + nome + " ja declarado anteriormente");
         }
 
         //Adiciona aos atributos da Table
@@ -310,11 +310,11 @@ public class Visitor extends SQLoopBaseVisitor {
                        String atributo = atributos.get(i);
                        if(atributo.equals("inteiro")) {
                            if(!entrada.getTipo().equals("u_inteiro") || entrada.getTipo().equals("inteiro")) {
-                               mensagem.append("Linha "+ ctx.tabela().linha +": tipos diferentes entre atributo e parametros");
+                               mensagem.append("Linha "+ ctx.tabela().linha +": tipos diferentes entre parametro e atributo "+ entrada.getNome());
                            }
                        }
                        else {
-                           if(!atributo.equals(entrada.getTipo())) mensagem.append("Linha "+ ctx.tabela().linha +": tipos diferentes entre atributo e parametros");
+                           if(!atributo.equals(entrada.getTipo())) mensagem.append("Linha "+ ctx.tabela().linha +": tipos diferentes entre parametro e atributo "+entrada.getNome() );
                        }
                            
                    }
