@@ -29,19 +29,6 @@ public class GeradorDeCódigo extends SQLoopBaseVisitor {
     }
 
     @Override
-    public Object visitDefinicoes(SQLoopParser.DefinicoesContext ctx) {
-        if (ctx.def_metodos() != null) {
-            visitDef_metodos(ctx.def_metodos());
-        }
-
-        if (ctx.definicoes() != null) {
-            this.codigo.append(", \n");
-            visitDefinicoes(ctx.definicoes());
-        }
-        return null;
-    }
-
-    @Override
     public Object visitDeclaracoes(SQLoopParser.DeclaracoesContext ctx) {
         this.codigo.append("CREATE TABLE " + ctx.IDENT().getText() + " (\n");
         this.spaceCounter++;
@@ -60,6 +47,21 @@ public class GeradorDeCódigo extends SQLoopBaseVisitor {
 
         return null;
     }
+    
+    @Override
+    public Object visitDefinicoes(SQLoopParser.DefinicoesContext ctx) {
+        if (ctx.def_metodos() != null) {
+            visitDef_metodos(ctx.def_metodos());
+        }
+
+        if (ctx.definicoes() != null) {
+            this.codigo.append(", \n");
+            visitDefinicoes(ctx.definicoes());
+        }
+        return null;
+    }
+
+
     
     @Override
     public Object visitDef_metodos(SQLoopParser.Def_metodosContext ctx) {
@@ -166,10 +168,19 @@ public class GeradorDeCódigo extends SQLoopBaseVisitor {
             this.codigo.append("INSERT INTO " + tabelaStr + " VALUES (\n");
             spaceCounter++;
             if (ctx.insercao() != null) {
-                ArrayList<String> atributos = (ArrayList<String>) visitInsercao(ctx.insercao());
+                visitInsercao(ctx.insercao());
             }
             spaceCounter--;
-            this.codigo.append(");");
+            this.codigo.append("\n);");
+        }
+        return null;
+    }
+    
+    @Override
+    public Object visitInsercao(SQLoopParser.InsercaoContext ctx) {
+        if(ctx.valores() != null) {
+            ArrayList<String> atributos = (ArrayList<String>) visitValores(ctx.valores());
+            return atributos;
         }
         return null;
     }
@@ -179,13 +190,11 @@ public class GeradorDeCódigo extends SQLoopBaseVisitor {
         ArrayList<String> ret = new ArrayList<String>();
         if(ctx.valor() != null)
         {
-            String str = (String) visitValor(ctx.valor());
-            this.codigo.append("\t" + ctx.valor().getText() + ",\n");
-            ret.add(str);
+            visitValor(ctx.valor());
+            this.codigo.append("\t" + ctx.valor().getText());
         }
         if(ctx.mais_valor() != null) {
-            ArrayList<String> retorno = (ArrayList) visitMais_valor(ctx.mais_valor());
-            ret.addAll(retorno);
+            visitMais_valor(ctx.mais_valor());
         }
         
         return ret;
@@ -194,12 +203,11 @@ public class GeradorDeCódigo extends SQLoopBaseVisitor {
     @Override
     public Object visitMais_valor(SQLoopParser.Mais_valorContext ctx) {
         ArrayList<String> ret = new ArrayList<String>();
-        if(ctx.valor() != null) {    
+        if(ctx.valor() != null) {
+            int i = 0;
             for(SQLoopParser.ValorContext ctx1 : ctx.valor()) {
-                String str = (String) visitValor(ctx1);
-                spaceCounter++;
-                this.codigo.append("\t" + ctx1.getText() + ",\n");
-                ret.add(str);
+                this.codigo.append(", \n");
+                this.codigo.append("\t" + ctx1.getText());
             }
         }
         return ret;
