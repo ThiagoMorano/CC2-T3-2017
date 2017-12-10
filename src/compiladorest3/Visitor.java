@@ -72,7 +72,7 @@ public class Visitor extends SQLoopBaseVisitor {
     @Override
     public Object visitDdl(SQLoopParser.DdlContext ctx) {
         visitDeclaracoes(ctx.declaracoes());
-         List<Table> tabelas = tabelaDeSimbolos.getTables();
+        List<Table> tabelas = tabelaDeSimbolos.getTables();
         for(Table tabela1 : tabelas) {
             for(Relationship rp : tabela1.getAllBelongsTo()) {
                 String nome = rp.tabelaRelacionada;
@@ -401,11 +401,4 @@ public class Visitor extends SQLoopBaseVisitor {
         System.out.println(retorno);
         return retorno;
     }
-    
-    
-    
-    
-    
-    
-
 }

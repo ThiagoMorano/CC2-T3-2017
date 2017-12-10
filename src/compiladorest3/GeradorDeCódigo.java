@@ -27,134 +27,112 @@ public class GeradorDeCódigo extends SQLoopBaseVisitor {
         }
         this.codigo.append(espaços + texto);
     }
-    
-    /*public String getTipo(String tipo_basico) {
-        switch (tipo_basico) {
-            case "inteiro":
-                return "int ";
-            case "literal":
-                return "char ";
-            case "real":
-                return "float ";
-            case "logico":
-                return "boolean ";
-        }
-        return null;
-    }
-
-    private String getChar(String tipo) {
-        switch (tipo) {
-            case "inteiro":
-                return "%d";
-            case "real":
-                return "%f";
-            case "literal":
-                return "%s";
-            default:
-                return null;
-        }
-
-    }*/
 
     @Override
     public Object visitDefinicoes(SQLoopParser.DefinicoesContext ctx) {
-        if(ctx.def_metodos() != null) 
+        if (ctx.def_metodos() != null) {
             visitDef_metodos(ctx.def_metodos());
-       
-        if(ctx.definicoes() != null) {
+        }
+
+        if (ctx.definicoes() != null) {
             this.codigo.append(", \n");
-            visitDefinicoes(ctx.definicoes()); 
+            visitDefinicoes(ctx.definicoes());
         }
         return null;
     }
 
     @Override
-    public Object visitDef_metodos(SQLoopParser.Def_metodosContext ctx) {
-       
-        if(ctx.tipo_def == 0) {
-            String atributo = (String) visitVar_int(ctx.var_int());
-            append(atributo + " INTEGER UNSIGNED AUTO_INCREMENT FOREIGN KEY");
+    public Object visitDeclaracoes(SQLoopParser.DeclaracoesContext ctx) {
+        this.codigo.append("CREATE TABLE " + ctx.IDENT().getText() + " (\n");
+        this.spaceCounter++;
+        visitDefinicoes(ctx.definicoes());
+        
+        if (ctx.relacoes() != null) {
+            visitRelacoes(ctx.relacoes());
         }
-        else if(ctx.tipo_def == 1) {
-            String atributo = ctx.var_int().IDENT().getText();
-            append(atributo + " INTEGER");             
+        
+        this.spaceCounter--;
+        this.codigo.append("\n);\n\n");
+        
+        if (ctx.declaracoes() != null) {
+            visitDeclaracoes(ctx.declaracoes());
         }
-        else if(ctx.tipo_def == 2) {
-            String atributo = ctx.var_int().IDENT().getText();
-            append(atributo + " INTEGER UNSIGNED");
-        }
-        else if(ctx.tipo_def == 3) {
-            String atributo = ctx.var_str().IDENT.getText();
-            append(atributo + " VARCHAR(30)");
-        }
-        else if(ctx.tipo_def == 4) {
-            String atributo = ctx.var_date().IDENT.getText();
-            append(atributo + " DATE");
-        }
-        else if(ctx.tipo_def == 5) {
-            append("created_at TIMESTAMP DEFAULT '0000-00-00 00:00:00',\n");
-            append("update_at TIMESTAMP DEFAULT '0000-00-00 00:00:00'");
-        }
+
         return null;
     }
     
     @Override
-    public Object visitDeclaracoes(SQLoopParser.DeclaracoesContext ctx) {
-         this.codigo.append("CREATE TABLE "+ctx.IDENT().getText()+" (\n");
-         this.spaceCounter++; 
-         visitDefinicoes(ctx.definicoes());
-         if(ctx.relacoes() != null)
-             visitRelacoes(ctx.relacoes());
-         if(ctx.declaracoes() != null)
-             visitDeclaracoes(ctx.declaracoes());
-         this.spaceCounter--;
-         this.codigo.append("\n)");
-         return null;         
+    public Object visitDef_metodos(SQLoopParser.Def_metodosContext ctx) {
+
+        if (ctx.tipo_def == 0) {
+            String atributo = (String) visitVar_int(ctx.var_int());
+            append(atributo + " INT AUTO_INCREMENT PRIMARY KEY NOT NULL");
+        } else if (ctx.tipo_def == 1) {
+            String atributo = ctx.var_int().IDENT().getText();
+            append(atributo + " INT NOT NULL");
+        } else if (ctx.tipo_def == 2) {
+            String atributo = ctx.var_int().IDENT().getText();
+            append(atributo + " INT UNSIGNED NOT NULL");
+        } else if (ctx.tipo_def == 3) {
+            String atributo = ctx.var_str().IDENT.getText();
+            append(atributo + " VARCHAR(255) NOT NULL");
+        } else if (ctx.tipo_def == 4) {
+            String atributo = ctx.var_date().IDENT.getText();
+            append(atributo + " DATE NOT NULL");
+        } else if (ctx.tipo_def == 5) {
+            append("created_at TIMESTAMP DEFAULT '0000-00-00 00:00:00' NOT NULL,\n");
+            append("updated_at TIMESTAMP DEFAULT '0000-00-00 00:00:00' NOT NULL");
+        }
+        return null;
     }
 
     @Override
     public Object visitVar_date(SQLoopParser.Var_dateContext ctx) {
-         if(ctx != null)       
-            return ctx.IDENT.getText(); 
-        else
+        if (ctx != null) {
+            return ctx.IDENT.getText();
+        } else {
             return null;
+        }
     }
 
     @Override
     public Object visitVar_str(SQLoopParser.Var_strContext ctx) {
-         if(ctx != null)       
-            return ctx.IDENT.getText(); 
-        else
+        if (ctx != null) {
+            return ctx.IDENT.getText();
+        } else {
             return null;
+        }
     }
 
     @Override
     public Object visitVar_int(SQLoopParser.Var_intContext ctx) {
-        if(ctx != null)       
-            return ctx.IDENT.getText(); 
-        else
+        if (ctx != null) {
+            return ctx.IDENT.getText();
+        } else {
             return null;
+        }
     }
 
     @Override
     public Object visitRelacoes(SQLoopParser.RelacoesContext ctx) {
-        if(ctx.rel_def() != null) 
+        if (ctx.rel_def() != null) {
             visitRel_def(ctx.rel_def());
+        }
         return null;
     }
 
     @Override
     public Object visitRel_def(SQLoopParser.Rel_defContext ctx) {
-        if(ctx.rel_metodos() != null) {
+        if (ctx.rel_metodos() != null) {
             ArrayList<String> retorno = (ArrayList<String>) visitRel_metodos(ctx.rel_metodos());
-            if(retorno != null) {
+            if (retorno != null) {
                 this.codigo.append(",\n");
                 System.out.println(retorno);
                 String atributo = retorno.get(0);
                 String tipo = retorno.get(1);
                 String tabela = ctx.tabela().IDENT().getText();
-                if(tipo.equals("belongsTo")) {
-                    this.append("FOREIGN KEY fk_"+tabela+"("+atributo+") REFERENCES "+atributo+"(id)");
+                if (tipo.equals("belongsTo")) {
+                    this.append("FOREIGN KEY " + "(" + atributo + "_id) REFERENCES " + atributo + "(id)");
                 }
             }
         }
@@ -163,20 +141,68 @@ public class GeradorDeCódigo extends SQLoopBaseVisitor {
 
     @Override
     public Object visitRel_metodos(SQLoopParser.Rel_metodosContext ctx) {
-        if(ctx.var_str() != null) {
+        if (ctx.var_str() != null) {
             ArrayList<String> retorno = new ArrayList<String>();
-            retorno.add(ctx.var_str().IDENT().getText());            
+            retorno.add(ctx.var_str().IDENT().getText());
             System.out.println(ctx.tipo_rel);
-            if(ctx.tipo_rel == 0) retorno.add("belongsTo");       
-            if(ctx.tipo_rel == 1) retorno.add("hasMany");
-            if(ctx.tipo_rel == 2) retorno.add("hasOne");            
+            if (ctx.tipo_rel == 0) {
+                retorno.add("belongsTo");
+            }
+            if (ctx.tipo_rel == 1) {
+                retorno.add("hasMany");
+            }
+            if (ctx.tipo_rel == 2) {
+                retorno.add("hasOne");
+            }
             return retorno;
         }
         return null;
     }
-    
-    
-}
-    
-    
 
+    @Override
+    public Object visitCmd(SQLoopParser.CmdContext ctx) {
+        if (ctx.tabela() != null) {
+            String tabelaStr = ctx.tabela().IDENT.getText();
+            this.codigo.append("INSERT INTO " + tabelaStr + " VALUES (\n");
+            spaceCounter++;
+            if (ctx.insercao() != null) {
+                ArrayList<String> atributos = (ArrayList<String>) visitInsercao(ctx.insercao());
+            }
+            spaceCounter--;
+            this.codigo.append(");");
+        }
+        return null;
+    }
+    
+    @Override
+    public Object visitValores(SQLoopParser.ValoresContext ctx) {
+        ArrayList<String> ret = new ArrayList<String>();
+        if(ctx.valor() != null)
+        {
+            String str = (String) visitValor(ctx.valor());
+            this.codigo.append("\t" + ctx.valor().getText() + ",\n");
+            ret.add(str);
+        }
+        if(ctx.mais_valor() != null) {
+            ArrayList<String> retorno = (ArrayList) visitMais_valor(ctx.mais_valor());
+            ret.addAll(retorno);
+        }
+        
+        return ret;
+    }
+    
+    @Override
+    public Object visitMais_valor(SQLoopParser.Mais_valorContext ctx) {
+        ArrayList<String> ret = new ArrayList<String>();
+        if(ctx.valor() != null) {    
+            for(SQLoopParser.ValorContext ctx1 : ctx.valor()) {
+                String str = (String) visitValor(ctx1);
+                spaceCounter++;
+                this.codigo.append("\t" + ctx1.getText() + ",\n");
+                ret.add(str);
+            }
+        }
+        return ret;
+    }
+
+}
