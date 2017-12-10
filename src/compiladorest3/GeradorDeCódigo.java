@@ -55,7 +55,7 @@ public class GeradorDeCódigo extends SQLoopBaseVisitor {
         }
 
         if (ctx.definicoes() != null) {
-            this.codigo.append(", \n");
+            this.codigo.append(",\n");
             visitDefinicoes(ctx.definicoes());
         }
         return null;
@@ -133,7 +133,7 @@ public class GeradorDeCódigo extends SQLoopBaseVisitor {
                 String atributo = retorno.get(0);
                 String tipo = retorno.get(1);
                 String tabela = ctx.tabela().IDENT().getText();
-                if (tipo.equals("belongsTo") || tipo.equals("hasMany")) {
+                if (tipo.equals("belongsTo") || tipo.equals("hasMany") || tipo.equals("hasOne")) {
                     this.append("FOREIGN KEY " + "(" + atributo + "_id) REFERENCES " + atributo + "(id)");
                 }
             }
@@ -206,7 +206,7 @@ public class GeradorDeCódigo extends SQLoopBaseVisitor {
         if(ctx.valor() != null) {
             int i = 0;
             for(SQLoopParser.ValorContext ctx1 : ctx.valor()) {
-                this.codigo.append(", \n");
+                this.codigo.append(",\n");
                 this.codigo.append("\t" + ctx1.getText());
             }
         }
