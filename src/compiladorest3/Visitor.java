@@ -72,7 +72,7 @@ public class Visitor extends SQLoopBaseVisitor {
     @Override
     public Object visitDdl(SQLoopParser.DdlContext ctx) {
         visitDeclaracoes(ctx.declaracoes());
-         List<Table> tabelas = tabelaDeSimbolos.getTables();
+        List<Table> tabelas = tabelaDeSimbolos.getTables();
         for(Table tabela1 : tabelas) {
             for(Relationship rp : tabela1.getAllBelongsTo()) {
                 String nome = rp.tabelaRelacionada;
@@ -307,8 +307,10 @@ public class Visitor extends SQLoopBaseVisitor {
            String tabelaStr = ctx.tabela().IDENT.getText();
            if(ctx.insercao() != null) {
                ArrayList<String> atributos = (ArrayList<String>) visitInsercao(ctx.insercao());
+               System.out.print(atributos);
                Table tabela = tabelaDeSimbolos.getTable(tabelaStr); 
                ArrayList<EntradaTabelaDeSimbolos> atributosTabela = retiraAtributos(tabela.getAtrs());
+               System.out.print(atributosTabela);
                if(atributosTabela.size() < atributos.size())
                    mensagem.append("Linha "+ ctx.tabela().linha +": quantidade de parametros diferente da quantidade de atributos\n");
                else {
@@ -316,7 +318,7 @@ public class Visitor extends SQLoopBaseVisitor {
                        EntradaTabelaDeSimbolos entrada = atributosTabela.get(i);
                        String atributo = atributos.get(i);
                        if(atributo.equals("inteiro")) {
-                           if(!entrada.getTipo().equals("u_inteiro") || entrada.getTipo().equals("inteiro")) {
+                           if(!(entrada.getTipo().equals("u_inteiro") || entrada.getTipo().equals("inteiro"))) {
                                mensagem.append("Linha "+ ctx.tabela().linha +": tipos diferentes entre parametro e atributo "+ entrada.getNome()+"\n");
                            }
                        }
@@ -381,7 +383,7 @@ public class Visitor extends SQLoopBaseVisitor {
     @Override
     public Object visitValor(SQLoopParser.ValorContext ctx) {
         if(ctx.valor_date() != null)
-            return "date";
+            return "data";
         if(ctx.valor_int() != null)
             return "inteiro";
         if(ctx.valor_str() != null)
@@ -398,14 +400,6 @@ public class Visitor extends SQLoopBaseVisitor {
             }
            
         }
-        System.out.println(retorno);
         return retorno;
     }
-    
-    
-    
-    
-    
-    
-
 }

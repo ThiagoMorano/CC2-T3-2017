@@ -1,0 +1,20 @@
+@DDL
+Table pessoa {
+	$pessoa->aincrement('id');
+	$pessoa->integer('telefone_id');
+	$pessoa->string('nome');
+	$pessoa->string('email');
+	$pessoa->integer('idade')->unsigned();
+	$pessoa->string('cpf');
+
+	Relationships{
+		$pessoa->hasMany('telefone');
+	}
+}
+
+Table telefone {
+	$telefone->aincrement('id');
+	$telefone->integer('ddd');
+	$telefone->string('numero');
+}
+@endDDL

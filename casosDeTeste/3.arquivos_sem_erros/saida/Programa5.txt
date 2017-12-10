@@ -1,0 +1,36 @@
+CREATE TABLE autor (
+	id INT AUTOINCREMENT PRIMARY KEY NOT NULL,
+	livro_id INT NOT NULL, 
+	nome VARCHAR(255) NOT NULL,
+	email VARCHAR(255) NOT NULL,
+	idade INT UNSIGNED NOT NULL,
+	cpf VARCHAR(255) NOT NULL,
+	FOREIGN KEY (livro_id) REFERENCES livro (id)
+);
+
+CREATE TABLE livro (
+	id INT AUTOINCREMENT PRIMARY KEY NOT NULL,
+	autor_id INT NOT NULL, 
+	nome VARCHAR(255) NOT NULL,
+	editora VARCHAR(255) NOT NULL, 
+	descricao VARCHAR(255) NOT NULL,
+	ano_lancamento DATE NOT NULL, 
+	edicao INT UNSIGNED NOT NULL,
+	FOREIGN KEY (autor_id) REFERENCES autor(id)
+);
+
+INSERT INTO autor VALUES(
+	0,
+	"carlaoherrera@email.com",
+	44,
+	"111.222.333-4"
+);
+
+INSERT INTO livro VALUES(
+	0
+	"O santo dos santos",
+	"Editora Nova",
+	"Livro destinado à todos aqueles que se consideram santos",
+	17-55-1944,
+	2
+);

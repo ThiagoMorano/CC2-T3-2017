@@ -1,0 +1,18 @@
+@DDL
+Table aluno {
+	$aluno->aincrement('id');
+	$aluno->string('nome');
+	$aluno->string('cpf');
+	$aluno->integer('idade')->unsigned();
+	$aluno->genTimestamps();
+}
+
+@endDDL
+
+@DML
+$aluno = [
+	"Matheus",
+	"123.456.789-0",
+	22
+];
+@endDML
