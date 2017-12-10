@@ -41,6 +41,7 @@ public class Visitor extends SQLoopBaseVisitor {
         
         escopos.empilhar(tabelaDeSimbolos);
         
+        //esses sao os tipos possiveis na linguagem
         tipos.add("string");
         tipos.add("inteiro");
         tipos.add("u_inteiro");
@@ -73,6 +74,7 @@ public class Visitor extends SQLoopBaseVisitor {
     public Object visitDdl(SQLoopParser.DdlContext ctx) {
         visitDeclaracoes(ctx.declaracoes());
         List<Table> tabelas = tabelaDeSimbolos.getTables();
+        //apos todas declaracoes é necessario verificar se as tabelas usadas nas relacoes foram declaradas
         for(Table tabela1 : tabelas) {
             for(Relationship rp : tabela1.getAllBelongsTo()) {
                 String nome = rp.tabelaRelacionada;
@@ -391,6 +393,7 @@ public class Visitor extends SQLoopBaseVisitor {
         return null;
     }
 
+    //ele retira os atributos inserciveis como a_incremente, timestamp  
     private ArrayList<EntradaTabelaDeSimbolos> retiraAtributos(ArrayList<EntradaTabelaDeSimbolos> atributos) {
         ArrayList<EntradaTabelaDeSimbolos> retorno = new ArrayList<EntradaTabelaDeSimbolos>();
         for(EntradaTabelaDeSimbolos str : atributos) {
