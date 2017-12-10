@@ -133,7 +133,7 @@ public class GeradorDeCódigo extends SQLoopBaseVisitor {
                 String atributo = retorno.get(0);
                 String tipo = retorno.get(1);
                 String tabela = ctx.tabela().IDENT().getText();
-                if (tipo.equals("belongsTo")) {
+                if (tipo.equals("belongsTo") || tipo.equals("hasMany")) {
                     this.append("FOREIGN KEY " + "(" + atributo + "_id) REFERENCES " + atributo + "(id)");
                 }
             }
@@ -171,7 +171,7 @@ public class GeradorDeCódigo extends SQLoopBaseVisitor {
                 visitInsercao(ctx.insercao());
             }
             spaceCounter--;
-            this.codigo.append("\n);");
+            this.codigo.append("\n);\n\n");
         }
         return null;
     }

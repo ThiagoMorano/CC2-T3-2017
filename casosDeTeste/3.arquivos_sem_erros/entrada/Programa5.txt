@@ -29,7 +29,7 @@ Table livro {
 
 @DML
 $autor = [
-	0
+	8,
 	"Carlos Herrera",
 	"carlaoherrera@email.com",
 	44,
@@ -37,7 +37,7 @@ $autor = [
 ];
 
 $livro = [
-	0
+	7,
 	"O santo dos santos",
 	"Editora Nova",
 	"Livro destinado à todos aqueles que se consideram santos",
