@@ -1,0 +1,20 @@
+@DDL
+Table livro {
+	$livro->aincrement('id');
+	$livro->string('nome');
+	$livro->string('editora');
+	$livro->string('descricao');
+	$livro->date('ano_lancamento');
+	$livro->integer('edicao')->unsigned();
+}
+@endDDL
+
+@DML
+$livro = [
+	"Dom Cosmpolitan",
+	"Editora Nova",
+	"Livro bastante misterioso, cheio de histórias incríveis",
+	20-11-1997,
+	55
+];
+@endDML

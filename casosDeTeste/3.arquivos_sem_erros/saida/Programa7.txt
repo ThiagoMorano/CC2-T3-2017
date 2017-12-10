@@ -1,0 +1,18 @@
+CREATE TABLE livro (
+	id INT AUTOINCREMENT PRIMARY KEY NOT NULL,
+	nome VARCHAR(255) NOT NULL, editora VARCHAR(255) NOT NULL,
+	descricao VARCHAR(255) NOT NULL,
+	ano_lancamento DATE NOT NULL,
+	created_at TIMESTAMP DEFAULT '0000-00-00 00:00:00' NOT NULL,
+	updated_at TIMESTAMP DEFAULT '0000-00-00 00:00:00' NOT NULL
+);
+
+INSERT INTO livro VALUES (
+	"Dom Cosmpolitan",
+	"Editora Nova",
+	"Livro bastante misterioso, cheio de histórias incríveis",
+	'1997-11-20',
+	55,
+	'2018-11-10 05:00:00',
+	'2018-11-10 05:00:00',
+);

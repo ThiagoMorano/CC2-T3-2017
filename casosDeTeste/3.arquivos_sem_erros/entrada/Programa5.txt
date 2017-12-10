@@ -1,0 +1,47 @@
+@DDL
+Table autor {
+	$autor->aincrement('id');
+	$autor->integer('livro_id');
+	$autor->string('nome');
+	$autor->string('email');
+	$autor->integer('idade')->unsigned();
+	$autor->string('cpf');
+
+	Relationships{
+		$autor->hasMany('livro');
+	}
+}
+
+Table livro {
+	$livro->aincrement('id');
+	$livro->integer('autor_id');
+	$livro->string('nome');
+	$livro->string('editora');
+	$livro->string('descricao');
+	$livro->date('ano_lancamento');
+	$livro->integer('edicao')->unsigned();
+
+	Relationships{
+		$livro->hasMany('autor');
+	}
+}
+@endDDL
+
+@DML
+$autor = [
+	0
+	"Carlos Herrera",
+	"carlaoherrera@email.com",
+	44,
+	"111.222.333-4"
+];
+
+$livro = [
+	0
+	"O santo dos santos",
+	"Editora Nova",
+	"Livro destinado à todos aqueles que se consideram santos",
+	17-55-1944,
+	2
+];
+@endDML

@@ -1,0 +1,21 @@
+@DDL
+Table aluno {
+	$aluno->aincrement('id');
+	$aluno->integer('universidade_id');
+	$aluno->string('nome');
+	$aluno->string('cpf');
+	$aluno->integer('idade')->unsigned();
+	$aluno->genTimestamps();
+
+	Relationships{
+		$aluno->belongsTo('universidade');
+	}
+}
+
+Table universidade {
+	$universidade->aincrement('id');
+	$universidade->string('nome');
+	$universidade->integer('ano_fundacao')->unsigned();
+	$universidade->genTimestamps();
+}
+@endDDL
